@@ -62,7 +62,32 @@ server.get('/api/users:id', (req, res) => {
     }
 })
 
-
+server.delete('/api/users:id', (req, res) => {
+    // find the user to be deleted with id
+    const userToDelete = users.find(user => {
+        if(user.id.toString() === req.params.id){
+            return user;
+        }
+    })
+    // if userTo Delete doesn't exist then the user to delete wasn't found
+    if (userToDelete) {
+        // remove the userToDelete for the users array
+        users = users.filter(user => {
+            if (user !== userToDelete) {
+                return user
+            }
+        })
+        // if userToDelete is still in array, then there was an error
+        if (users.includes(userToDelete)){
+            res.status(500).json({ errorMessage: "The user could not be removed" })
+        } else {
+            res.status(201).json({ message: "The deletion was a success!!!" })
+        }
+    } else {
+        res.status(404).json({ message: "The user with the specified ID does not exist." })
+    }
+    
+})
 
 
 
