@@ -33,6 +33,14 @@ server.post('/api/users', (req, res) => {
     }
 })
 
+// get the current list of users
+server.get('/api/users', (req, res) => {
+    if (!users) {
+        res.status(500).json({ errorMessage: "The users information could not be retrieved." })
+    } else {
+        res.status(201).json(users)
+    }
+})
 
 
 server.listen(8000, () => console.log('The API works'))
