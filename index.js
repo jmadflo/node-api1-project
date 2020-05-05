@@ -7,16 +7,21 @@ server.use(express.json())
 // data when server first runs
 let users = [
     {
-        id: 1,
+        id: 'abc',
         name: 'Juan Madero',
         bio: 'A person who is always right about everything. Truly astonishing!'
+    },
+    {
+        id: 'def',
+        name: 'Darth Vader',
+        bio: 'Dark Lord of the Sith'
     }
 ]
 
 // posts a new user
 server.post('/api/users', (req, res) => {
     let newUser = {
-        sid: shortid.generate(),
+        id: shortid.generate(),
         ...req.body
     }
     // if new user is missing a name or bio key-value pair then return a 400 error
@@ -43,17 +48,17 @@ server.get('/api/users', (req, res) => {
     }
 })
 
-server.get('/api/users:id', (req, res) => {
+server.get('/api/users/:id', (req, res) => {
     // user we want is the id that is equal to id
-    const userToRetrieve = users.find(user => {
-        if(user.id.toString() === req.params.id){
-            return user;
+    const userToGet = users.find(user => {
+        if(user.id == req.params.id){
+            return user
         }
     })
     // for request to be successful, user must exist and be confirmed to be in the users array (seems reduntant, but that is the instruction)
-    if (userToRetrieve) {
-        if (users.includes(userToRetrieve)){
-            res.status(201).json(userToRetrieve)
+    if (userToGet) {
+        if (users.includes(userToGet)){
+            res.status(201).json(userToGet)
         } else {
             res.status(500).json({ errorMessage: "The user information could not be retrieved." })
         }
@@ -62,18 +67,18 @@ server.get('/api/users:id', (req, res) => {
     }
 })
 
-server.delete('/api/users:id', (req, res) => {
+server.delete('/api/users/:id', (req, res) => {
     // find the user to be deleted with id
     const userToDelete = users.find(user => {
-        if(user.id.toString() === req.params.id){
-            return user;
+        if(user.id === req.params.id){
+            return user
         }
     })
     // if userTo Delete doesn't exist then the user to delete wasn't found
     if (userToDelete) {
         // remove the userToDelete for the users array
         users = users.filter(user => {
-            if (user.id.toString !== req.params.id) {
+            if (user.id !== req.params.id) {
                 return user
             }
         })
@@ -88,11 +93,11 @@ server.delete('/api/users:id', (req, res) => {
     }
 })
 
-server.put('/api/users:id',(req, res) => {
+server.put('/api/users/:id',(req, res) => {
     // find the user to be edited using the id from the url
     const userToReplace = users.find(user => {
-        if(user.id.toString() === req.params.id){
-            return user;
+        if(user.id === req.params.id){
+            return user
         }
     })
     // respond with error if request body is missing a name or bio
@@ -102,14 +107,15 @@ server.put('/api/users:id',(req, res) => {
         // if user with request url id doesn't exist, respond with an error
         if (userToReplace) {
             // replace the user that the client wants to edit
+            const updatedUser = { id: req.params.id, name: req.body.name, bio: req.body.bio }
             users = users.map(user => {
                 if (user.id === req.params.id) {
-                    return { ...req.body, id: req.params.id }
+                    return updatedUser
                 }
                 return user
             })
             // if request body is in the users array then the editing was successful otherwise the replacement is not in the array and an error should be returned
-            if (users.includes(req.body)) {
+            if (users.includes(updatedUser)) {
                 res.status(200).json(req.body)
             } else {
                 res.status(500).json({ errorMessage: "The user information could not be modified." })
@@ -119,8 +125,5 @@ server.put('/api/users:id',(req, res) => {
         }
     }
 })
-
-
-
 
 server.listen(8000, () => console.log('The API works'))
