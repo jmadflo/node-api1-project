@@ -48,7 +48,7 @@ function App() {
     axios.get(`http://localhost:8000/api/users/${formValues.id}`)
       .then(response => {
         console.log(response)
-        setUsers(response)
+        setUsers([response.data])
       })
       .catch(error => console.log(error))
   }
