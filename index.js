@@ -1,8 +1,10 @@
 const express = require('express')
 const shortid = require('shortid')
+const cors = require('cors')
 
 const server = express()
 server.use(express.json())
+server.use(cors()) // for stretch
 
 // data when server first runs
 let users = [
@@ -116,7 +118,7 @@ server.put('/api/users/:id',(req, res) => {
             })
             // if request body is in the users array then the editing was successful otherwise the replacement is not in the array and an error should be returned
             if (users.includes(updatedUser)) {
-                res.status(200).json(req.body)
+                res.status(200).json(updatedUser)
             } else {
                 res.status(500).json({ errorMessage: "The user information could not be modified." })
             }
