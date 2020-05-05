@@ -78,22 +78,25 @@ function App() {
 
   return (
     <div className='App'>
-      <form>
-        <input name='id' placeholder='id' value={formValues.id} onChange={updateForm}/>
-        <input name='name' placeholder='name' value={formValues.name} onChange={updateForm}/>
-        <input name='bio' placeholder='bio' value={formValues.bio} onChange={updateForm}/>
-      </form>
-      <div className='buttonContainer'>
-        <button onClick={getAll}>Get all</button>
-        <button onClick={postNew}>Post New</button>
-        <button onClick={getById}>Get By Id</button>
-        <button onClick={deleteUser}>Delete</button>
-        <button onClick={editUser}>Edit User</button>
+      <h1>API Tester</h1>
+      <div className='formAndButtons'>
+        <form>
+          <input name='id' placeholder='id' value={formValues.id} onChange={updateForm}/>
+          <input name='name' placeholder='name' value={formValues.name} onChange={updateForm}/>
+          <input name='bio' placeholder='bio' value={formValues.bio} onChange={updateForm}/>
+        </form>
+        <div className='buttonContainer'>
+          <button onClick={getAll}>Get all</button>
+          <button onClick={postNew}>Post New</button>
+          <button onClick={getById}>Get By Id</button>
+          <button onClick={deleteUser}>Delete</button>
+          <button onClick={editUser}>Edit User</button>
+        </div>
       </div>
       {/* render data */}
       {users.map(user => {
         return (
-          <div key={user.id}>
+          <div key={user.id} className='user'>
             <p>Id: {user.id}</p>
             <p>Name: {user.name}</p>
             <p>Bio: {user.bio}</p>
