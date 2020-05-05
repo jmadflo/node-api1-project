@@ -35,12 +35,36 @@ server.post('/api/users', (req, res) => {
 
 // get the current list of users
 server.get('/api/users', (req, res) => {
-    if (!users) {
+    // if users cannot be retrieved then users will not exist, but an empty users list is still a sucessful get. It's just that the list is empty.
+    if (!users && users !== []) {
         res.status(500).json({ errorMessage: "The users information could not be retrieved." })
     } else {
         res.status(201).json(users)
     }
 })
+
+server.get('/api/users:id', (req, res) => {
+    // user we want is the id that is equal to id
+    const userToRetrieve = users.find(user => {
+        if(user.id.toString() === req.params.id){
+            return user;
+        }
+    })
+    // for request to be successful, user must exist and be confirmed to be in the users array (seems reduntant, but that is the instruction)
+    if (userToRetrieve) {
+        if (users.includes(userToRetrieve)){
+            res.status(201).json(userToRetrieve)
+        } else {
+            res.status(500).json({ errorMessage: "The user information could not be retrieved." })
+        }
+    } else {
+        res.status(404).json({ message: "The user with the specified ID does not exist." })
+    }
+})
+
+
+
+
 
 
 server.listen(8000, () => console.log('The API works'))
