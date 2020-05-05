@@ -73,7 +73,7 @@ server.delete('/api/users:id', (req, res) => {
     if (userToDelete) {
         // remove the userToDelete for the users array
         users = users.filter(user => {
-            if (user !== userToDelete) {
+            if (user.id.toString !== req.params.id) {
                 return user
             }
         })
@@ -81,12 +81,43 @@ server.delete('/api/users:id', (req, res) => {
         if (users.includes(userToDelete)){
             res.status(500).json({ errorMessage: "The user could not be removed" })
         } else {
-            res.status(201).json({ message: "The deletion was a success!!!" })
+            res.status(201).json({ message: 'The deletion was a success!!!' })
         }
     } else {
         res.status(404).json({ message: "The user with the specified ID does not exist." })
     }
-    
+})
+
+server.put('/api/users:id',(req, res) => {
+    // find the user to be edited using the id from the url
+    const userToReplace = users.find(user => {
+        if(user.id.toString() === req.params.id){
+            return user;
+        }
+    })
+    // respond with error if request body is missing a name or bio
+    if (!req.body.name || !req.body.bio) {
+        res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+    } else {
+        // if user with request url id doesn't exist, respond with an error
+        if (userToReplace) {
+            // replace the user that the client wants to edit
+            users = users.map(user => {
+                if (user.id === req.params.id) {
+                    return { ...req.body, id: req.params.id }
+                }
+                return user
+            })
+            // if request body is in the users array then the editing was successful otherwise the replacement is not in the array and an error should be returned
+            if (users.includes(req.body)) {
+                res.status(200).json(req.body)
+            } else {
+                res.status(500).json({ errorMessage: "The user information could not be modified." })
+            }
+        } else {
+            res.status(404).json({ message: "The user with the specified ID does not exist." })
+        }
+    }
 })
 
 
